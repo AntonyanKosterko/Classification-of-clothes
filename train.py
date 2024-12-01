@@ -20,7 +20,7 @@ transform = transforms.Compose([
 train_dataset = datasets.FashionMNIST(root='./data', train=True, download=True, transform=transform)
 train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
 
-experiment_name = "fashion_mnist_resnet_experiment"
+experiment_name = "fashion_mnist_resnet_experiment2"
 mlflow.set_experiment(experiment_name)
 
 # Определение модели (ResNet-18)
@@ -75,8 +75,14 @@ def train_model_with_optuna(trial):
             correct += (predicted == labels).sum().item()
 
         # Логируем метрики по эпохе
-        mlflow.log_metric('epoch_loss', running_loss / len(train_loader))
-        mlflow.log_metric('epoch_accuracy', 100 * correct / total)
+        epoch_loss = running_loss / len(train_loader)
+        epoch_accuracy = 100 * correct / total
+        
+        # Логируем метрики для каждой эпохи в MLflow
+        mlflow.log_metric('epoch_loss', epoch_loss, step=epoch)
+        mlflow.log_metric('epoch_accuracy', epoch_accuracy, step=epoch)
+
+        print(f"Epoch {epoch + 1}/{epochs} - Loss: {epoch_loss:.4f}, Accuracy: {epoch_accuracy:.2f}%")
 
     # Логируем финальную модель
     mlflow.pytorch.log_model(model, "model")
@@ -84,7 +90,7 @@ def train_model_with_optuna(trial):
     # Завершаем эксперимент
     mlflow.end_run()
 
-    return running_loss / len(train_loader)  # Оптимизируем по минимальному loss
+    return epoch_loss  # Оптимизируем по минимальному loss
 
 # Определение исследования Optuna
 study = optuna.create_study(direction='minimize')
