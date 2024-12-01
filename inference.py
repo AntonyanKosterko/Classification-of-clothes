@@ -6,7 +6,7 @@ from torchvision import datasets
 import numpy as np
 
 # Указываем путь к модели в MLflow (в данном случае, это имя эксперимента и модель)
-model_uri = "runs:/<run-id>/model"  # Замените <run-id> на ID вашей сохранённой модели
+model_uri = "runs:/bc849e88bbd44802a391bd8a71ab6e42/model"  # Замените <run-id> на ID вашей сохранённой модели
 
 # Загружаем модель из MLflow
 model = mlflow.pytorch.load_model(model_uri)
@@ -18,8 +18,9 @@ model.eval()  # Устанавливаем модель в режим инфер
 
 # Подготовка трансформации для данных (нормализация как для Fashion MNIST)
 transform = transforms.Compose([
+    transforms.Grayscale(num_output_channels=3),  # Преобразуем в 3 канала
     transforms.ToTensor(),
-    transforms.Normalize((0.5,), (0.5,))  # Для Fashion MNIST
+    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))  # Нормализация для 3 каналов
 ])
 
 # Загружаем тестовые данные
