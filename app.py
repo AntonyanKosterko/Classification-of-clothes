@@ -6,6 +6,9 @@ from torchvision import datasets
 import numpy as np
 import streamlit as st
 from PIL import Image
+import datetime
+
+from db import add_user, add_prediction
 
 # Загрузка модели из MLflow
 model_uri = "runs:/bc849e88bbd44802a391bd8a71ab6e42/model"  # Замените на ваш run-id
@@ -32,6 +35,23 @@ def infer(model, image):
         _, preds = torch.max(outputs, 1)  # Получаем индексы максимальных значений
         probs = torch.nn.functional.softmax(outputs, dim=1)  # Вычисляем вероятности
     return preds.item(), probs[0, preds].item()
+
+# Форма для добавления нового пользователя
+st.title("Регистрация пользователя")
+name = st.text_input("Ваше имя")
+email = st.text_input("Ваша электронная почта")
+
+if st.button("Зарегистрироваться"):
+    if name and email:
+        add_user(name, email)
+        st.success(f"Пользователь {name} зарегистрирован!")
+    else:
+        st.error("Пожалуйста, заполните все поля.")
+
+# Форма для предсказания
+st.title("Загрузите изображение для предсказания")
+
+uploaded_file = st.file_uploader("Выберите изображение...", type=["png", "jpg", "jpeg"])
 
 # Интерфейс Streamlit
 st.title("Fashion MNIST Model Inference")
