@@ -67,5 +67,16 @@ def add_prediction(user_id, image_path, predicted_class, probability, timestamp)
     ''', (user_id, image_path, predicted_class, probability, timestamp))
     conn.commit()
     conn.close()
+    
+def get_user_id_by_name_and_email(name, email):
+    conn = sqlite3.connect('predictions.db')
+    cursor = conn.cursor()
+    cursor.execute("SELECT id FROM users WHERE name=? AND email=?", (name, email))
+    result = cursor.fetchone()
+    conn.close()
+    
+    if result:
+        return result[0]  # Возвращаем user_id
+    return None  # Если пользователя нет, возвращаем None
 
 create_db()

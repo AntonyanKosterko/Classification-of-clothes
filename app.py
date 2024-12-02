@@ -7,7 +7,7 @@ import numpy as np
 import streamlit as st
 from PIL import Image
 import datetime
-from db import add_user, add_prediction
+from db import add_user, add_prediction, get_user_id_by_name_and_email
 
 model_uri = "runs:/bc849e88bbd44802a391bd8a71ab6e42/model"
 model = mlflow.pytorch.load_model(model_uri)
@@ -60,3 +60,13 @@ if uploaded_file is not None:
 
     st.write(f"Предсказанный класс: **{class_names[class_id]}**")
     st.write(f"Вероятность: **{prob * 100:.2f}%**")
+    
+    if name and email:
+        user_id = get_user_id_by_name_and_email(name, email)
+        
+        if user_id:
+            timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            add_prediction(user_id, uploaded_file.name, class_names[class_id], prob, timestamp)
+            st.success("Предсказание добавлено в базу данных.")
+        else:
+            st.error("Пользователь не найден.")
