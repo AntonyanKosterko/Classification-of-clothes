@@ -1,16 +1,12 @@
 import sqlite3
 import os
 
-# Функция для создания базы данных и таблиц
 def create_db():
-    # Проверяем, существует ли база данных
     db_file = 'predictions.db'
     if not os.path.exists(db_file):
-        # Если базы данных нет, создаем ее
         conn = sqlite3.connect(db_file)
         cursor = conn.cursor()
         
-        # Создаем таблицу пользователей
         cursor.execute('''
             CREATE TABLE users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -19,7 +15,6 @@ def create_db():
             )
         ''')
 
-        # Создаем таблицу для предсказаний
         cursor.execute('''
             CREATE TABLE predictions (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -32,7 +27,6 @@ def create_db():
             )
         ''')
 
-        # Создаем таблицу для хранения информации о моделях
         cursor.execute('''
             CREATE TABLE models (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -41,7 +35,6 @@ def create_db():
             )
         ''')
 
-        # Создаем таблицу для метрик обучения
         cursor.execute('''
             CREATE TABLE training_metrics (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -75,7 +68,4 @@ def add_prediction(user_id, image_path, predicted_class, probability, timestamp)
     conn.commit()
     conn.close()
 
-
-
-# Вызов функции создания базы данных
 create_db()
