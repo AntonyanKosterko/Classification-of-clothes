@@ -42,9 +42,6 @@ if st.button("Зарегистрироваться"):
     else:
         st.error("Пожалуйста, заполните все поля.")
 
-st.title("Загрузите изображение для предсказания")
-uploaded_file = st.file_uploader("Выберите изображение...", type=["png", "jpg", "jpeg"])
-
 st.title("Fashion MNIST Model Inference")
 st.write("Загрузите изображение, и модель предскажет его класс.")
 
